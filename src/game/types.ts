@@ -1,8 +1,8 @@
 // Game types for the cup water sorting puzzle
 
-export type LiquidColor = 'red' | 'blue' | 'green' | 'yellow' | 'purple';
+export type LiquidColor = 'red' | 'blue' | 'green' | 'yellow' | 'purple' | 'orange' | 'pink';
 
-export const LIQUID_COLORS: LiquidColor[] = ['red', 'blue', 'green', 'yellow', 'purple'];
+export const LIQUID_COLORS: LiquidColor[] = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink'];
 
 export const COLOR_HEX: Record<LiquidColor, string> = {
   red: '#e74c3c',
@@ -10,10 +10,12 @@ export const COLOR_HEX: Record<LiquidColor, string> = {
   green: '#2ecc71',
   yellow: '#f1c40f',
   purple: '#9b59b6',
+  orange: '#e67e22',
+  pink: '#fd79a8',
 };
 
 export const MAX_LAYERS = 4;
-export const NUM_FILLED_CUPS = 5;
+export const NUM_FILLED_CUPS = 7;
 export const NUM_EMPTY_CUPS = 2;
 export const TOTAL_CUPS = NUM_FILLED_CUPS + NUM_EMPTY_CUPS;
 

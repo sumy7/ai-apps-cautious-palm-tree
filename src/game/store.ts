@@ -3,8 +3,8 @@ import type { Cup, GameState, LiquidColor } from './types';
 import {
   LIQUID_COLORS,
   MAX_LAYERS,
-  NUM_EMPTY_CUPS,
   NUM_FILLED_CUPS,
+  TOTAL_CUPS,
 } from './types';
 
 // Shuffle array using Fisher-Yates algorithm
@@ -17,9 +17,9 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-// Initialize cups with shuffled liquids
+// Initialize cups with shuffled liquids distributed across all cups including empty ones
 function initializeCups(): Cup[] {
-  // Create all liquid units (4 of each color for 5 colors = 20 units)
+  // Create all liquid units (4 of each color for 7 colors = 28 units)
   const allLiquids: LiquidColor[] = [];
   for (const color of LIQUID_COLORS) {
     for (let i = 0; i < MAX_LAYERS; i++) {
@@ -30,21 +30,29 @@ function initializeCups(): Cup[] {
   // Shuffle all liquids
   const shuffledLiquids = shuffleArray(allLiquids);
 
-  // Create cups
+  // Create all cups (including empty ones) and distribute liquids
   const cups: Cup[] = [];
-
-  // Fill cups with shuffled liquids
-  for (let i = 0; i < NUM_FILLED_CUPS; i++) {
+  const totalCups = TOTAL_CUPS;
+  const totalLiquids = shuffledLiquids.length;
+  
+  // Calculate how many layers per cup on average, and distribute
+  // We have 28 liquid units to distribute across 9 cups
+  // Each cup can have at most 4 layers
+  // We'll distribute evenly: some cups get more, some get less
+  
+  let liquidIndex = 0;
+  for (let i = 0; i < totalCups; i++) {
     const cup: Cup = [];
-    for (let j = 0; j < MAX_LAYERS; j++) {
-      cup.push(shuffledLiquids[i * MAX_LAYERS + j]);
+    // Calculate how many layers this cup should get
+    const remainingCups = totalCups - i;
+    const remainingLiquids = totalLiquids - liquidIndex;
+    const layersForThisCup = Math.min(MAX_LAYERS, Math.ceil(remainingLiquids / remainingCups));
+    
+    for (let j = 0; j < layersForThisCup && liquidIndex < totalLiquids; j++) {
+      cup.push(shuffledLiquids[liquidIndex]);
+      liquidIndex++;
     }
     cups.push(cup);
-  }
-
-  // Add empty cups
-  for (let i = 0; i < NUM_EMPTY_CUPS; i++) {
-    cups.push([]);
   }
 
   return cups;
