@@ -1,43 +1,61 @@
-# PC Web Games
+# 杯子倒水消除游戏 (Water Sort Puzzle)
 
-A PC web games repository built with Vite + React + TypeScript.
+一款经典的倒水消除益智游戏，使用 Vite + React + TypeScript 开发。
 
-## Features
+![游戏截图](https://github.com/user-attachments/assets/4da24503-48f4-425a-8f19-c31df53a7160)
 
-- ⚡ **Vite** - Lightning fast HMR and build
-- ⚛️ **React 19** - Modern React with TypeScript
-- 🎮 **Phaser 3** - HTML5 game framework for 2D games
-- 🔊 **Howler.js** - Audio library for web games
-- 🐻 **Zustand** - Lightweight state management
-- 🎨 **Framer Motion** - Smooth animations
+## 🎮 游戏介绍
 
-## Getting Started
+杯子倒水消除游戏是一款轻松有趣的益智游戏。游戏中有多个装有不同颜色液体的杯子，玩家需要通过将液体从一个杯子倒入另一个杯子，最终使每个杯子中只包含同一种颜色的液体。
 
-### Prerequisites
+## 📖 游戏规则
+
+1. **选择杯子**：点击一个有液体的杯子将其选中
+2. **倒水操作**：再点击另一个杯子，将液体倒入
+3. **倒水条件**：只能将液体倒入空杯子或顶部颜色相同的杯子
+4. **完成目标**：当每个杯子中的液体都是同一种颜色时，游戏获胜
+5. **锁定杯子**：填满4层同色液体的杯子会自动锁定，显示🔒图标
+
+## 🎯 游戏功能
+
+- **撤销操作**：可以撤销上一步操作，方便纠错
+- **打散颜色**：每局游戏有2次打散机会，可以重新随机分配未锁定杯子中的液体颜色
+- **重新开始**：随时可以重新开始新的一局游戏
+
+## ✨ 技术特性
+
+- ⚡ **Vite** - 极速的热更新和构建
+- ⚛️ **React 19** - 使用 TypeScript 的现代 React
+- 🐻 **Zustand** - 轻量级状态管理
+- 🎨 **Framer Motion** - 流畅的动画效果
+
+## 🚀 快速开始
+
+### 环境要求
 
 - Node.js 20+
 - npm 9+
 
-### Installation
+### 安装和运行
 
 ```bash
-# Install dependencies
+# 安装依赖
 npm install
 
-# Start development server
+# 启动开发服务器
 npm run dev
 
-# Build for production
+# 构建生产版本
 npm run build
 
-# Preview production build
+# 预览生产版本
 npm run preview
 ```
 
-## Deployment
+## 📦 部署
 
-This project is automatically deployed to GitHub Pages when changes are pushed to the `main` branch.
+本项目在推送到 `main` 分支时会自动部署到 GitHub Pages。
 
-## License
+## 📄 许可证
 
 MIT
