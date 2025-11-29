@@ -96,7 +96,7 @@ export function Game() {
             打散 ({shuffleCount})
           </button>
           <button className="control-btn reset-btn" onClick={reset}>
-            重置
+            重新开始
           </button>
         </div>
 

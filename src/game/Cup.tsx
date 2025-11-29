@@ -19,16 +19,18 @@ export function Cup({ cup, isSelected, onClick, index }: CupProps) {
     layers.push(cup[i] || null);
   }
 
+  const handleClick = isLocked ? () => {} : onClick;
+
   return (
     <motion.div
       className={`cup-container ${isLocked ? 'locked' : ''}`}
-      onClick={isLocked ? undefined : onClick}
+      onClick={handleClick}
       initial={{ scale: 1 }}
       animate={{
         scale: isSelected ? 1.1 : 1,
         y: isSelected ? -10 : 0,
       }}
-      whileHover={isLocked ? undefined : { scale: 1.05 }}
+      whileHover={isLocked ? {} : { scale: 1.05 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
     >
       <div className={`cup ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''}`} data-index={index}>
