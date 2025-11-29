@@ -19,6 +19,9 @@ export const NUM_FILLED_CUPS = 7;
 export const NUM_EMPTY_CUPS = 2;
 export const TOTAL_CUPS = NUM_FILLED_CUPS + NUM_EMPTY_CUPS;
 
+// Number of shuffle power-ups per game
+export const INITIAL_SHUFFLE_COUNT = 2;
+
 // A cup is an array of liquid colors, where index 0 is the bottom layer
 export type Cup = (LiquidColor | null)[];
 
@@ -27,4 +30,5 @@ export interface GameState {
   selectedCupIndex: number | null;
   moveHistory: { from: number; to: number; count: number }[];
   gameStatus: 'playing' | 'won' | 'lost';
+  shuffleCount: number; // Remaining shuffle power-ups
 }

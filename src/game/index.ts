@@ -1,4 +1,4 @@
 export { Game } from './Game';
 export { Cup } from './Cup';
-export { useGameStore } from './store';
+export { useGameStore, isCupLocked } from './store';
 export * from './types';

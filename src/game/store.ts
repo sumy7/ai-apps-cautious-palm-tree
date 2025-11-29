@@ -5,6 +5,7 @@ import {
   MAX_LAYERS,
   NUM_FILLED_CUPS,
   TOTAL_CUPS,
+  INITIAL_SHUFFLE_COUNT,
 } from './types';
 
 // Shuffle array using Fisher-Yates algorithm
@@ -91,8 +92,22 @@ function getLiquidCount(cup: Cup): number {
   return cup.filter((l) => l !== null).length;
 }
 
-// Check if a pour is valid
+// Check if a cup is locked (completed with 4 same-color layers)
+export function isCupLocked(cup: Cup): boolean {
+  const liquidCount = getLiquidCount(cup);
+  if (liquidCount !== MAX_LAYERS) return false;
+  
+  const firstColor = cup[0];
+  if (firstColor === null) return false;
+  
+  return cup.every((l) => l === firstColor);
+}
+
+// Check if a pour is valid (also checks if cups are locked)
 function canPour(fromCup: Cup, toCup: Cup): boolean {
+  // Cannot pour from or to a locked cup
+  if (isCupLocked(fromCup) || isCupLocked(toCup)) return false;
+  
   const fromTop = getTopLiquid(fromCup);
   if (fromTop === null) return false; // Source cup is empty
 
@@ -194,6 +209,7 @@ interface GameStore extends GameState {
   selectCup: (index: number) => void;
   reset: () => void;
   undo: () => void;
+  shuffle: () => void;
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -201,12 +217,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
   selectedCupIndex: null,
   moveHistory: [],
   gameStatus: 'playing',
+  shuffleCount: INITIAL_SHUFFLE_COUNT,
 
   selectCup: (index: number) => {
     const state = get();
     if (state.gameStatus !== 'playing') return;
 
     const { cups, selectedCupIndex } = state;
+
+    // Cannot select a locked cup
+    if (isCupLocked(cups[index])) return;
 
     // If no cup is selected, select this one (if it has liquid)
     if (selectedCupIndex === null) {
@@ -243,8 +263,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         gameStatus,
       });
     } else {
-      // If pour failed and target has liquid, try selecting it instead
-      if (getLiquidCount(cups[index]) > 0) {
+      // If pour failed and target has liquid and not locked, try selecting it instead
+      if (getLiquidCount(cups[index]) > 0 && !isCupLocked(cups[index])) {
         set({ selectedCupIndex: index });
       } else {
         set({ selectedCupIndex: null });
@@ -258,6 +278,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       selectedCupIndex: null,
       moveHistory: [],
       gameStatus: 'playing',
+      shuffleCount: INITIAL_SHUFFLE_COUNT,
     });
   },
 
@@ -297,6 +318,66 @@ export const useGameStore = create<GameStore>((set, get) => ({
       selectedCupIndex: null,
       moveHistory: history,
       gameStatus: 'playing',
+    });
+  },
+
+  shuffle: () => {
+    const state = get();
+    if (state.gameStatus !== 'playing') return;
+    if (state.shuffleCount <= 0) return;
+
+    const cups = state.cups;
+    
+    // Collect all liquids from unlocked cups
+    const unlockedCupIndices: number[] = [];
+    const allLiquids: LiquidColor[] = [];
+    
+    for (let i = 0; i < cups.length; i++) {
+      if (!isCupLocked(cups[i])) {
+        unlockedCupIndices.push(i);
+        for (const liquid of cups[i]) {
+          if (liquid !== null) {
+            allLiquids.push(liquid);
+          }
+        }
+      }
+    }
+
+    // No unlocked cups with liquid to shuffle
+    if (allLiquids.length === 0) return;
+
+    // Shuffle all collected liquids
+    const shuffledLiquids = shuffleArray(allLiquids);
+
+    // Redistribute shuffled liquids back to unlocked cups
+    const newCups = [...cups];
+    let liquidIndex = 0;
+    
+    for (const cupIndex of unlockedCupIndices) {
+      const originalCupLength = getLiquidCount(cups[cupIndex]);
+      const newCup: Cup = [];
+      
+      for (let j = 0; j < originalCupLength && liquidIndex < shuffledLiquids.length; j++) {
+        newCup.push(shuffledLiquids[liquidIndex]);
+        liquidIndex++;
+      }
+      
+      newCups[cupIndex] = newCup;
+    }
+
+    // Check game status after shuffle
+    let gameStatus: 'playing' | 'won' | 'lost' = 'playing';
+    if (checkWin(newCups)) {
+      gameStatus = 'won';
+    } else if (!hasValidMoves(newCups)) {
+      gameStatus = 'lost';
+    }
+
+    set({
+      cups: newCups,
+      selectedCupIndex: null,
+      shuffleCount: state.shuffleCount - 1,
+      gameStatus,
     });
   },
 }));
