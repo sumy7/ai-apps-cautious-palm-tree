@@ -3,7 +3,7 @@ import { Cup } from './Cup';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Game() {
-  const { cups, selectedCupIndex, selectCup, reset, undo, moveHistory, gameStatus } = useGameStore();
+  const { cups, selectedCupIndex, selectCup, reset, undo, shuffle, moveHistory, gameStatus, shuffleCount } = useGameStore();
 
   return (
     <div className="game-layout">
@@ -22,6 +22,10 @@ export function Game() {
             <span className="stat-label">杯子</span>
             <span className="stat-value">{cups.length}</span>
           </div>
+          <div className="stat-item">
+            <span className="stat-label">打散</span>
+            <span className="stat-value">{shuffleCount}</span>
+          </div>
         </div>
       </header>
 
@@ -35,6 +39,9 @@ export function Game() {
           <div className="controls-list">
             <button className="control-btn" onClick={undo} disabled={moveHistory.length === 0}>
               ↩️ 撤销上一步
+            </button>
+            <button className="control-btn shuffle-btn" onClick={shuffle} disabled={shuffleCount === 0}>
+              🎲 打散颜色 ({shuffleCount})
             </button>
             <button className="control-btn reset-btn" onClick={reset}>
               🔄 重新开始
@@ -85,8 +92,11 @@ export function Game() {
           <button className="control-btn" onClick={undo} disabled={moveHistory.length === 0}>
             撤销
           </button>
+          <button className="control-btn shuffle-btn" onClick={shuffle} disabled={shuffleCount === 0}>
+            打散 ({shuffleCount})
+          </button>
           <button className="control-btn reset-btn" onClick={reset}>
-            重新开始
+            重置
           </button>
         </div>
 
@@ -96,6 +106,7 @@ export function Game() {
           <ul>
             <li>点击一个杯子选中它，再点击另一个杯子将液体倒入</li>
             <li>只能将液体倒入空杯子或顶部颜色相同的杯子</li>
+            <li>完成的杯子（4层同色）会自动锁定</li>
             <li>目标：让每个杯子里只有一种颜色的液体</li>
           </ul>
         </div>
