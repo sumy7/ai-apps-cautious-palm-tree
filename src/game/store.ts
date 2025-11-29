@@ -258,7 +258,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (state.moveHistory.length === 0) return;
 
     const history = [...state.moveHistory];
-    const lastMove = history.pop()!;
+    const lastMove = history.pop();
+    if (!lastMove) return; // Defensive check
+    
     const cups = [...state.cups];
 
     // Reverse the pour
